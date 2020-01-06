@@ -10,7 +10,9 @@ def get_id_generator():
         yield f'{id}'.zfill(8)
         id += 1
 
+
 id_generator = get_id_generator()
+
 
 @app.route('/', methods=['POST'])
 def add_shortcode():
