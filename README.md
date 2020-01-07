@@ -5,7 +5,7 @@
 
 ## Features
 - [x] Basic URL shortener functionality
-- [x] Use a database to store the shortened URLs instead of keeping it in memory
+- [x] Use a database to store the shortened URLs instead of keeping them in memory
     - [ ] Add database error handling
 - [ ] Check that the data received is a valid URL
 - [ ] Use a random generated ID for the shortened URLs instead of using an incremental number
