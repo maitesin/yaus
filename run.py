@@ -1,4 +1,3 @@
-import short
-
+from short import create_app
 if __name__ == "__main__":
-    short.app.run()
+    create_app().run()
