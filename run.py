@@ -1,4 +1,4 @@
-import shortener
+import short
 
-if __name__ == '__main__':
-    shortener.app.run()
+if __name__ == "__main__":
+    short.app.run()
