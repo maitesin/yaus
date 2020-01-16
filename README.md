@@ -16,6 +16,7 @@
 
 ## How to run short locally
 Before running **short** its dependencies have to be met.
+
 ### Install dependencies
 To install **short**'s dependencies just run the following command:
 ```bash
