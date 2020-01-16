@@ -1,5 +1,5 @@
 def test_good_redirection(client, entry_url):
-    response = client.get('/00000001')
+    response = client.get(entry_url)
 
     assert b'Redirecting' in response.data
     assert b'https://oscarforner.com' in response.data

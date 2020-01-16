@@ -23,4 +23,4 @@ def client():
 
 @pytest.fixture
 def entry_url(client):
-    client.post('/', data='https://oscarforner.com')
+    return client.post('/', data='https://oscarforner.com').headers['Location']

@@ -8,7 +8,10 @@
 - [x] Use a database to store the shortened URLs instead of keeping them in memory
     - [x] Add database error handling
 - [x] Check that the data received is a valid URL
-- [ ] Use a random generated ID for the shortened URLs instead of using an incremental number
+- [x] Use a random generated ID for the shortened URLs instead of using an incremental number
+    - [ ] Split the random generator function from the string trimmer part
+    - [ ] Add test for the string trimming part
+- [ ] Check that the shortcode received is up to 8 characters and only contains alphanumeric values
 - [ ] Add a frontend functionality to allow creating the short URLs from the browser itself
 - [ ] Custom error webpages
 - [ ] Make the app user aware

@@ -1,6 +1,7 @@
 from flask import Blueprint, request, make_response, redirect, abort
 from short.models import URL
-from short import id_generator, db
+from short.id_generator import id_generator
+from short import db
 from sqlalchemy import exc
 from validators import url as url_validator
 

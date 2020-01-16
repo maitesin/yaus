@@ -16,13 +16,3 @@ def create_app(config_class=Config):
     app.register_blueprint(short_routes)
 
     return app
-
-
-def get_id_generator():
-    id = 1
-    while True:
-        yield f"{id}".zfill(8)
-        id += 1
-
-
-id_generator = get_id_generator()
