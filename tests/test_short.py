@@ -13,6 +13,13 @@ def test_bad_redirection(client):
     assert response.status_code == 404
 
 
+def test_fail_invalid_url(client):
+    response = client.post('/', data='wololo')
+
+    assert 'Location' not in response.headers
+    assert response.status_code == 422
+
+
 def test_create_short_url(client):
     response = client.post('/', data='https://wololo.com')
 

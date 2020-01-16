@@ -4,3 +4,4 @@ black==19.10b0
 Flask==1.1.1
 flask_sqlalchemy==2.4.1
 gunicorn==20.0.4
+validators==0.14.1
