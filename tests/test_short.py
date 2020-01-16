@@ -18,3 +18,15 @@ def test_create_short_url(client):
 
     assert 'Location' in response.headers
     assert response.status_code == 201
+
+
+def test_create_short_url_twice(client):
+    response1 = client.post('/', data='https://wololo.com')
+
+    assert 'Location' in response1.headers
+    assert response1.status_code == 201
+
+    response2 = client.post('/', data='https://wololo.com')
+
+    assert response1.headers['Location'] == response2.headers['Location']
+    assert response2.status_code == 201
