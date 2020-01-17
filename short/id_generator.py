@@ -2,11 +2,15 @@ from string import ascii_letters, digits
 from random import choices
 
 
-def get_id_generator():
+def _get_id_generator():
     values = ascii_letters + digits + ' '
 
     while True:
-        yield ''.join(choices(values, k=8)).strip().replace(' ', '')
+        yield _trim(''.join(choices(values, k=8)))
 
 
-id_generator = get_id_generator()
+def _trim(value):
+    return value.strip().replace(' ', '')
+
+
+id_generator = _get_id_generator()
