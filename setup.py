@@ -8,4 +8,4 @@ setup(name='short',
       url='https://www.gitlab.com/maitesin/short',
       py_modules=['short'],
       extras_require={"test": ["pytest", "coverage"]},
-     )
+      )

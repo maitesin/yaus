@@ -9,7 +9,8 @@ from short import create_app, db
 def client():
     app = create_app()
     db_fd, app.config['DATABASE'] = tempfile.mkstemp()
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.config['DATABASE']}"
+    db_uri = f"sqlite:///{app.config['DATABASE']}"
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['TESTING'] = True
 
     db.create_all(app=app)

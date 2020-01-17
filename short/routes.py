@@ -30,6 +30,8 @@ def add_shortcode():
 
 @short.route("/<string:shortcode>")
 def get_url_by_shortcode(shortcode):
+    if len(shortcode) > 8 or not shortcode.isalnum():
+        abort(422)
     url = URL.query.filter_by(shortened=shortcode).first()
     if url:
         return redirect(url.extended, code=307)

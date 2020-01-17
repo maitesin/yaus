@@ -13,6 +13,18 @@ def test_bad_redirection(client):
     assert response.status_code == 404
 
 
+def test_invalid_shortcode_too_large(client):
+    response = client.get('/123456789')
+
+    assert response.status_code == 422
+
+
+def test_invalid_shortcode_not_alphanumeric(client):
+    response = client.get('/!@#$%^&*')
+
+    assert response.status_code == 422
+
+
 def test_fail_invalid_url(client):
     response = client.post('/', data='wololo')
 
