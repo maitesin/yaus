@@ -6,7 +6,7 @@ from short import create_app, db
 
 
 @pytest.fixture
-def client():
+def app():
     app = create_app()
     db_fd, app.config['DATABASE'] = tempfile.mkstemp()
     db_uri = f"sqlite:///{app.config['DATABASE']}"
@@ -15,11 +15,16 @@ def client():
 
     db.create_all(app=app)
 
-    with app.test_client() as client:
-        yield client
+    yield app
 
     os.close(db_fd)
     os.unlink(app.config['DATABASE'])
+
+
+@pytest.fixture
+def client(app):
+    with app.test_client() as client:
+        yield client
 
 
 @pytest.fixture

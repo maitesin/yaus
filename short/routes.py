@@ -1,18 +1,17 @@
 from flask import Blueprint, request, make_response, redirect, abort
 from short.models import URL
 from short.id_generator import id_generator
+from short.middleware import verify_url, verify_shortcode
 from short import db
 from sqlalchemy import exc
-from validators import url as url_validator
 
 short = Blueprint('short', __name__)
 
 
 @short.route("/", methods=["POST"])
+@verify_url
 def add_shortcode():
     url = request.get_data()
-    if not url_validator(url.decode('utf-8')):
-        abort(422)
     key = next(id_generator)
     entry = URL(shortened=key, extended=url)
     db.session.add(entry)
@@ -29,9 +28,8 @@ def add_shortcode():
 
 
 @short.route("/<string:shortcode>")
+@verify_shortcode
 def get_url_by_shortcode(shortcode):
-    if len(shortcode) > 8 or not shortcode.isalnum():
-        abort(422)
     url = URL.query.filter_by(shortened=shortcode).first()
     if url:
         return redirect(url.extended, code=307)
