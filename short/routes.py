@@ -1,4 +1,4 @@
-from flask import Blueprint, request, make_response, redirect, abort
+from flask import Blueprint, request, make_response, redirect, abort, render_template
 from short.models import URL
 from short.id_generator import id_generator
 from short.middleware import verify_url, verify_shortcode
@@ -6,6 +6,11 @@ from short import db
 from sqlalchemy import exc
 
 short = Blueprint('short', __name__)
+
+
+@short.route("/", methods=["GET"])
+def home():
+    return render_template('home.html')
 
 
 @short.route("/", methods=["POST"])
