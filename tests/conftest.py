@@ -2,7 +2,7 @@ import os
 import tempfile
 import pytest
 
-from short import create_app, db
+from yaus import create_app, db
 
 
 @pytest.fixture

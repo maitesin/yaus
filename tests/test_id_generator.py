@@ -1,4 +1,4 @@
-from short.id_generator import _trim
+from yaus.id_generator import _trim
 
 
 def test_trim():

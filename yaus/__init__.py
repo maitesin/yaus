@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from short.config import Config
+from yaus.config import Config
 
 db = SQLAlchemy()
 
@@ -11,8 +11,8 @@ def create_app(config_class=Config):
 
     db.init_app(app)
 
-    from short.routes import short as short_routes
+    from yaus.routes import yaus as yaus_routes
 
-    app.register_blueprint(short_routes)
+    app.register_blueprint(yaus_routes)
 
     return app

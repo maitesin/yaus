@@ -1,7 +1,7 @@
-[![Build Status](https://travis-ci.org/maitesin/short.svg?branch=master)](https://travis-ci.org/maitesin/short)
+[![Build Status](https://travis-ci.org/maitesin/yaus.svg?branch=master)](https://travis-ci.org/maitesin/yaus)
 
-# short
-**short** is a URL shortener service
+# YAUS
+**YAUS** **Y**et **A**nother **U**RL **S**hortener
 
 ## Features
 - [x] Basic URL shortener functionality
@@ -18,21 +18,21 @@
 - [ ] Make the app user aware
 - [ ] Allow users to create custom named shortened URLs
 
-## How to run short locally
-Before running **short** its dependencies have to be met.
+## How to run YAUS locally
+Before running **YAUS** its dependencies have to be met.
 
 ### Install dependencies
-To install **short**'s dependencies just run the following command:
+To install **YAUS**'s dependencies just run the following command:
 ```bash
 pip install -r requirements.txt
 ```
-### Running short
-To run **short** run the following command:
+### Running YAUS
+To run **YAUS** run the following command:
 ```bash
 python run.py
 ```
 
-## How to run short tests
+## How to run YAUS tests
 The only requirement is to have tox installed.
 ```bash
 tox

@@ -1,5 +1,5 @@
 from flask import make_response
-from short.middleware import verify_url, verify_shortcode
+from yaus.middleware import verify_url, verify_shortcode
 from werkzeug.exceptions import UnprocessableEntity
 
 

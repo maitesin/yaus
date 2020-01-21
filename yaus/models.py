@@ -1,4 +1,4 @@
-from short import db
+from yaus import db
 
 
 class URL(db.Model):

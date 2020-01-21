@@ -1,4 +1,4 @@
-from short import db, create_app
+from yaus import db, create_app
 
 app = create_app()
 

@@ -1,19 +1,19 @@
 from flask import Blueprint, session, make_response, redirect, abort, render_template, flash, request, Markup
-from short.models import URL
-from short.id_generator import id_generator
-from short.middleware import verify_url, verify_shortcode
-from short import db
+from yaus.models import URL
+from yaus.id_generator import id_generator
+from yaus.middleware import verify_url, verify_shortcode
+from yaus import db
 from sqlalchemy import exc
 
-short = Blueprint('short', __name__)
+yaus = Blueprint('yaus', __name__)
 
 
-@short.route("/", methods=["GET"])
+@yaus.route("/", methods=["GET"])
 def home():
     return render_template('home.html')
 
 
-@short.route("/", methods=["POST"])
+@yaus.route("/", methods=["POST"])
 @verify_url
 def add_shortcode():
     url = session['url']
@@ -33,7 +33,7 @@ def add_shortcode():
     return resp
 
 
-@short.route("/<string:shortcode>")
+@yaus.route("/<string:shortcode>")
 @verify_shortcode
 def get_url_by_shortcode(shortcode):
     url = URL.query.filter_by(shortened=shortcode).first()
