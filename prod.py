@@ -1,5 +1,12 @@
 from yaus import db, create_app
+from yaus import Config
+import os
 
-app = create_app()
+
+class ProdConfig(Config):
+    SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL']
+
+
+app = create_app(ProdConfig)
 
 db.create_all(app=app)
