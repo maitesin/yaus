@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, abort
+from flask import request, abort, session
 from validators import url as url_validator
 
 
@@ -9,6 +9,7 @@ def verify_url(f):
         url_data = request.form.get('url', request.get_data().decode('utf-8'))
         if not url_validator(url_data):
             abort(422)
+        session['url'] = url_data
         return f(*args, **kwargs)
     return decorated_function
 
