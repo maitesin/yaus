@@ -27,7 +27,7 @@ def add_shortcode():
         db.session.rollback()
         entry = URL.query.filter_by(extended=url).first()
         key = entry.shortened
-    flash(Markup(f'Short URL created <a href="{request.url_root + key}">{request.url_root + key}</a> for {url}'), 'success')
+    flash(Markup(f'Short URL created <a href="{request.url_root + key}">{request.url_root + key}</a>'), 'success')
     resp = make_response(render_template('home.html'), 201)
     resp.headers["Location"] = key
     return resp
