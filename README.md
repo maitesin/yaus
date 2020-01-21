@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/maitesin/yaus.svg?branch=master)](https://travis-ci.org/maitesin/yaus)
 
 # YAUS
-**YAUS** **Y**et **A**nother **U**RL **S**hortener
+**YAUS**, **Y**et **A**nother **U**RL **S**hortener
 
 ## Features
 - [x] Basic URL shortener functionality
