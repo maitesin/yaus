@@ -27,7 +27,7 @@ def add_shortcode():
         db.session.rollback()
         entry = URL.query.filter_by(extended=url).first()
         key = entry.shortened
-    resp = make_response("Here you have it", 201)
+    resp = make_response(render_template('home.html'), 201)
     resp.headers["Location"] = key
     return resp
 

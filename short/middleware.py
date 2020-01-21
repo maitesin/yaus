@@ -6,8 +6,8 @@ from validators import url as url_validator
 def verify_url(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        url_data = request.get_data()
-        if not url_validator(url_data.decode('utf-8')):
+        url_data = request.form.get('url', request.get_data().decode('utf-8'))
+        if not url_validator(url_data):
             abort(422)
         return f(*args, **kwargs)
     return decorated_function
