@@ -132,4 +132,4 @@ dmypy.json
 .idea/
 
 # database of local run
-*/short.db
+*/yaus.db

@@ -4,7 +4,7 @@ import os
 
 
 class ProdConfig(Config):
-    SQLALCHEMY_DATABASE_URI=os.environ['DATABASE_URL']
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
 
 
 app = create_app(ProdConfig)
