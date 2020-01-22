@@ -13,10 +13,12 @@
     - [x] Add test for the string trimming part
 - [x] Check that the shortcode received is up to 8 characters and only contains alphanumeric values
 - [x] Find a way to not destroy the database every time the application is deployed
-- [x] Migrate to use PostgreSQL instead of SQLite
+    - [x] Migrate to use PostgreSQL instead of SQLite
 - [x] Add a frontend functionality to allow creating the short URLs from the browser itself
 - [x] Custom error webpages
-- [ ] Make the app user aware
+
+## TODO
+- [ ] Make **YAUS** user aware
 - [ ] Allow users to create custom named shortened URLs
 
 ## How to run YAUS locally
