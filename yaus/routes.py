@@ -23,7 +23,6 @@ def add_shortcode():
     try:
         db.session.commit()
     except exc.IntegrityError as e:
-        assert 'UNIQUE constraint failed' in str(e)
         db.session.rollback()
         entry = URL.query.filter_by(extended=url).first()
         key = entry.shortened
