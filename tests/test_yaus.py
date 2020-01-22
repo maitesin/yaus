@@ -9,7 +9,7 @@ def test_good_redirection(client, entry_url):
 def test_bad_redirection(client):
     response = client.get('/00000001')
 
-    assert b'404 Not Found' in response.data
+    assert b'Page not found' in response.data
     assert response.status_code == 404
 
 
