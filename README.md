@@ -15,7 +15,7 @@
 - [x] Find a way to not destroy the database every time the application is deployed
 - [x] Migrate to use PostgreSQL instead of SQLite
 - [x] Add a frontend functionality to allow creating the short URLs from the browser itself
-- [ ] Custom error webpages
+- [x] Custom error webpages
 - [ ] Make the app user aware
 - [ ] Allow users to create custom named shortened URLs
 

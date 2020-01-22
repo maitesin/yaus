@@ -39,3 +39,13 @@ def get_url_by_shortcode(shortcode):
     if url:
         return redirect(url.extended, code=307)
     abort(404)
+
+
+@yaus.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+
+@yaus.errorhandler(422)
+def page_not_found(e):
+    return render_template('422.html'), 422
