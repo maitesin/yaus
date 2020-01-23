@@ -1,16 +1,16 @@
 def test_good_redirection(client, entry_url):
     response = client.get(entry_url)
 
+    assert response.status_code == 307
     assert b"Redirecting" in response.data
     assert b"https://oscarforner.com" in response.data
-    assert response.status_code == 307
 
 
 def test_bad_redirection(client):
     response = client.get("/00000001")
 
-    assert b"Page not found" in response.data
     assert response.status_code == 404
+    assert b"Page not found" in response.data
 
 
 def test_invalid_shortcode_too_large(client):
@@ -28,24 +28,31 @@ def test_invalid_shortcode_not_alphanumeric(client):
 def test_fail_invalid_url(client):
     response = client.post("/", data="wololo")
 
-    assert "Location" not in response.headers
     assert response.status_code == 422
+    assert "Location" not in response.headers
+
+
+def test_fail_invalid_url_too_large(client):
+    response = client.post("/", data=f"https://{'x' * 10000}.com")
+
+    assert response.status_code == 422
+    assert "Location" not in response.headers
 
 
 def test_create_short_url(client):
     response = client.post("/", data="https://wololo.com")
 
-    assert "Location" in response.headers
     assert response.status_code == 201
+    assert "Location" in response.headers
 
 
 def test_create_short_url_twice(client):
     response1 = client.post("/", data="https://wololo.com")
 
-    assert "Location" in response1.headers
     assert response1.status_code == 201
+    assert "Location" in response1.headers
 
     response2 = client.post("/", data="https://wololo.com")
 
-    assert response1.headers["Location"] == response2.headers["Location"]
     assert response2.status_code == 201
+    assert response1.headers["Location"] == response2.headers["Location"]

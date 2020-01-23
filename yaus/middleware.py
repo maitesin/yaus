@@ -7,7 +7,7 @@ def verify_url(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         url_data = request.form.get("url", request.get_data().decode("utf-8"))
-        if not url_validator(url_data):
+        if not url_validator(url_data) or len(url_data) > 10000:
             abort(422)
         session["url"] = url_data
         return f(*args, **kwargs)

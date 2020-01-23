@@ -12,6 +12,7 @@ from flask import (
 from yaus.models import URL
 from yaus.id_generator import id_generator
 from yaus.middleware import verify_url, verify_shortcode
+from yaus.forms import URLShortenerForm
 from yaus import db
 from sqlalchemy import exc
 
@@ -20,13 +21,18 @@ yaus = Blueprint("yaus", __name__)
 
 @yaus.route("/", methods=["GET"])
 def home():
-    return render_template("home.html")
+    form = URLShortenerForm()
+    return render_template("home.html", form=form)
 
 
 @yaus.route("/", methods=["POST"])
 @verify_url
 def add_shortcode():
-    url = session["url"]
+    form = URLShortenerForm()
+    if form.validate_on_submit():
+        url = form.url
+    else:
+        url = session["url"]
     key = next(id_generator)
     entry = URL(shortened=key, extended=url)
     db.session.add(entry)
@@ -42,7 +48,7 @@ def add_shortcode():
         ),
         "success",
     )
-    resp = make_response(render_template("home.html"), 201)
+    resp = make_response(render_template("home.html", form=form), 201)
     resp.headers["Location"] = key
     return resp
 
