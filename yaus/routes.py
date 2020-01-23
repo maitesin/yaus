@@ -1,22 +1,32 @@
-from flask import Blueprint, session, make_response, redirect, abort, render_template, flash, request, Markup
+from flask import (
+    Blueprint,
+    session,
+    make_response,
+    redirect,
+    abort,
+    render_template,
+    flash,
+    request,
+    Markup,
+)
 from yaus.models import URL
 from yaus.id_generator import id_generator
 from yaus.middleware import verify_url, verify_shortcode
 from yaus import db
 from sqlalchemy import exc
 
-yaus = Blueprint('yaus', __name__)
+yaus = Blueprint("yaus", __name__)
 
 
 @yaus.route("/", methods=["GET"])
 def home():
-    return render_template('home.html')
+    return render_template("home.html")
 
 
 @yaus.route("/", methods=["POST"])
 @verify_url
 def add_shortcode():
-    url = session['url']
+    url = session["url"]
     key = next(id_generator)
     entry = URL(shortened=key, extended=url)
     db.session.add(entry)
@@ -26,8 +36,13 @@ def add_shortcode():
         db.session.rollback()
         entry = URL.query.filter_by(extended=url).first()
         key = entry.shortened
-    flash(Markup(f'Short URL created <a href="{request.url_root + key}">{request.url_root + key}</a>'), 'success')
-    resp = make_response(render_template('home.html'), 201)
+    flash(
+        Markup(
+            f'Short URL created <a href="{request.url_root + key}">{request.url_root + key}</a>'
+        ),
+        "success",
+    )
+    resp = make_response(render_template("home.html"), 201)
     resp.headers["Location"] = key
     return resp
 
@@ -43,9 +58,9 @@ def get_url_by_shortcode(shortcode):
 
 @yaus.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'), 404
+    return render_template("404.html"), 404
 
 
 @yaus.errorhandler(422)
 def page_not_found(e):
-    return render_template('422.html'), 422
+    return render_template("422.html"), 422
