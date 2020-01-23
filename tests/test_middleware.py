@@ -1,6 +1,6 @@
 from flask import make_response
 from yaus.middleware import verify_url, verify_shortcode
-from werkzeug.exceptions import UnprocessableEntity
+from werkzeug.exceptions import UnprocessableEntity, NotFound
 
 
 def noop(*args, **kwargs):
@@ -50,7 +50,7 @@ def test_verify_shortcode_invalid_shortcode_too_length(app):
         verify_shortcode_instance = verify_shortcode(noop)
         try:
             verify_shortcode_instance(shortcode="123456789")
-        except UnprocessableEntity:
+        except NotFound:
             return
 
         assert False

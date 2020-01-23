@@ -16,7 +16,7 @@ def test_bad_redirection(client):
 def test_invalid_shortcode_too_large(client):
     response = client.get("/123456789")
 
-    assert response.status_code == 422
+    assert response.status_code == 404
 
 
 def test_invalid_shortcode_not_alphanumeric(client):

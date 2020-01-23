@@ -19,8 +19,10 @@ def verify_shortcode(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         shortcode = kwargs["shortcode"]
-        if len(shortcode) > 8 or not shortcode.isalnum():
+        if not shortcode.isalnum():
             abort(422)
+        if len(shortcode) > 8:
+            abort(404)
         return f(*args, **kwargs)
 
     return decorated_function
