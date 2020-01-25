@@ -1,5 +1,5 @@
-from flask import make_response
-from yaus.middleware import verify_url, verify_shortcode
+from flask import make_response, request, session
+from yaus.middleware import verify_url, verify_shortcode, no_recursive_calls_allowed
 from werkzeug.exceptions import UnprocessableEntity, NotFound
 
 
@@ -51,6 +51,28 @@ def test_verify_shortcode_invalid_shortcode_too_length(app):
         try:
             verify_shortcode_instance(shortcode="123456789")
         except NotFound:
+            return
+
+        assert False
+
+
+def test_no_recursive_calls_allowed_valid_url(app):
+    with app.test_request_context(data="http://oscarforner.com"):
+        session['url'] = "http://oscarforner.com"
+        no_recursive_calls_instance = no_recursive_calls_allowed(noop)
+        response = no_recursive_calls_instance()
+
+        assert 201 == response.status_code
+
+
+def test_no_recursive_calls_allowed_invalid_url(app):
+    with app.test_request_context(data="https://yaus.dev/wololo"):
+        request.url_root = "https://yaus.dev"
+        session['url'] = request.url_root + "/wololo"
+        no_recursive_calls_instance = no_recursive_calls_allowed(noop)
+        try:
+            no_recursive_calls_instance()
+        except UnprocessableEntity:
             return
 
         assert False

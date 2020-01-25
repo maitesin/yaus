@@ -26,3 +26,14 @@ def verify_shortcode(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def no_recursive_calls_allowed(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        url = session["url"]
+        if url.startswith(request.url_root):
+            abort(422)
+        return f(*args, **kwargs)
+
+    return decorated_function

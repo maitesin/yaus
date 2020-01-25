@@ -11,7 +11,7 @@ from flask import (
 )
 from yaus.models import URL
 from yaus.id_generator import id_generator
-from yaus.middleware import verify_url, verify_shortcode
+from yaus.middleware import verify_url, verify_shortcode, no_recursive_calls_allowed
 from yaus.forms import URLShortenerForm
 from yaus import db
 from sqlalchemy import exc
@@ -27,6 +27,7 @@ def home():
 
 @yaus.route("/", methods=["POST"])
 @verify_url
+@no_recursive_calls_allowed
 def add_shortcode():
     form = URLShortenerForm()
     if form.validate_on_submit():
