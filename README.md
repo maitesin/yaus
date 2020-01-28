@@ -16,10 +16,15 @@
     - [x] Migrate to use PostgreSQL instead of SQLite
 - [x] Add a frontend functionality to allow creating the short URLs from the browser itself
 - [x] Custom error webpages
+- [x] Do not allow to generate a short URL for an already shortened URL
+- [x] Do not allow to generate a short URL for a URL that is already shorter than the resulting shortened URL
 
 ## TODO
+- [ ] Improve error messages depending on the cause of the errors
+- [ ] Add last used column in the URL table to keep track of the least most used URLs
 - [ ] Make **YAUS** user aware
 - [ ] Allow users to create custom named shortened URLs
+- [ ] Implement a way to get rid of the least used URLs
 
 ## How to run YAUS locally
 Before running **YAUS** its dependencies have to be met.
