@@ -29,4 +29,4 @@ def client(app):
 
 @pytest.fixture
 def entry_url(client):
-    return client.post("/", data="https://oscarforner.com").headers["Location"]
+    return client.post("/", data="https://oscarforner.com/projects").headers["Location"]

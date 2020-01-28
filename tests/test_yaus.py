@@ -39,20 +39,27 @@ def test_fail_invalid_url_too_large(client):
     assert "Location" not in response.headers
 
 
+def test_fail_invalid_url_too_short(client):
+    response = client.post("/", data=f"https://x.com")
+
+    assert response.status_code == 422
+    assert "Location" not in response.headers
+
+
 def test_create_short_url(client):
-    response = client.post("/", data="https://wololo.com")
+    response = client.post("/", data="https://wololo.com/somethingelse")
 
     assert response.status_code == 201
     assert "Location" in response.headers
 
 
 def test_create_short_url_twice(client):
-    response1 = client.post("/", data="https://wololo.com")
+    response1 = client.post("/", data="https://wololo.com/somethingelse")
 
     assert response1.status_code == 201
     assert "Location" in response1.headers
 
-    response2 = client.post("/", data="https://wololo.com")
+    response2 = client.post("/", data="https://wololo.com/somethingelse")
 
     assert response2.status_code == 201
     assert response1.headers["Location"] == response2.headers["Location"]

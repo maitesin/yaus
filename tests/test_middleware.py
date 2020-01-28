@@ -1,5 +1,5 @@
 from flask import make_response, request, session
-from yaus.middleware import verify_url, verify_shortcode, no_recursive_calls_allowed
+from yaus.middleware import verify_url, verify_shortcode, no_recursive_calls_allowed, no_longer_result_url_than_input_url
 from werkzeug.exceptions import UnprocessableEntity, NotFound
 
 
@@ -72,6 +72,28 @@ def test_no_recursive_calls_allowed_invalid_url(app):
         no_recursive_calls_instance = no_recursive_calls_allowed(noop)
         try:
             no_recursive_calls_instance()
+        except UnprocessableEntity:
+            return
+
+        assert False
+
+
+def test_no_longer_result_url_than_input_url_valid_url(app):
+    with app.test_request_context(data="http://oscarforner.com/projects"):
+        session['url'] = "http://oscarforner.com/projects"
+        no_longer_result_url_than_input_url_instance = no_longer_result_url_than_input_url(noop)
+        response = no_longer_result_url_than_input_url_instance()
+
+        assert 201 == response.status_code
+
+
+def test_no_longer_result_url_than_input_url_invalid_url(app):
+    with app.test_request_context(data="https://t.co/w"):
+        request.url_root = "https://t.co"
+        session['url'] = request.url_root + "/w"
+        no_longer_result_url_than_input_url_instance = no_longer_result_url_than_input_url(noop)
+        try:
+            no_longer_result_url_than_input_url_instance()
         except UnprocessableEntity:
             return
 

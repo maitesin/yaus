@@ -37,3 +37,15 @@ def no_recursive_calls_allowed(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def no_longer_result_url_than_input_url(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        url_length = len(session["url"])
+        generated_url_length = len(request.url_root) + 8
+        if url_length <= generated_url_length:
+            abort(422)
+        return f(*args, **kwargs)
+
+    return decorated_function
