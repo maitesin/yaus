@@ -15,9 +15,12 @@
 - [x] Find a way to not destroy the database every time the application is deployed
     - [x] Migrate to use PostgreSQL instead of SQLite
 - [x] Add a frontend functionality to allow creating the short URLs from the browser itself
-- [x] Custom error webpages
+- [x] Custom error pages
 
 ## TODO
+- [ ] Improve the custom error pages to provide more information regarding the reason of the failure
+- [ ] Add possibility to block URL to specific domains
+    - [ ] Use google safe browsing to obtain a list of flagged domains
 - [ ] Make **YAUS** user aware
 - [ ] Allow users to create custom named shortened URLs
 
