@@ -10,5 +10,5 @@ generate:
 test: generate
 	go test -v ./...
 
-lint:
+lint: generate
 	golangci-lint run
