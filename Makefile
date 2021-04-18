@@ -1,3 +1,6 @@
+tools-lint:
+	go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+
 generate:
 	go generate ./...
 

@@ -1,0 +1,16 @@
+name: lint
+on: [push, pull_request]
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.16.3'
+      - name: Download linting tools
+        run: make tools-lint
+      - name: Run lint
+        run: make lint
