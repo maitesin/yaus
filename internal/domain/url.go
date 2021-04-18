@@ -43,7 +43,7 @@ func generateRandomString(seed int64, size uint8) string {
 	rand.Seed(seed)
 	b := make([]byte, size)
 	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+		b[i] = letterBytes[rand.Intn(len(letterBytes))] //nolint: gosec
 	}
 	return string(b)
 }
