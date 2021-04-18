@@ -1,4 +1,7 @@
-tools-lint:
+tools-generate:
+	go get -u github.com/matryer/moq
+
+tools-lint: tools-generate
 	go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 generate:
@@ -7,5 +10,5 @@ generate:
 test: generate
 	go test -v ./...
 
-lint: generate
+lint:
 	golangci-lint run
