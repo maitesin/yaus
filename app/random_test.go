@@ -12,9 +12,9 @@ func TestRandomStringGeneratorWithTimeProviderUTC(t *testing.T) {
 	t.Parallel()
 
 	timeProvider := &app.TimeProviderUTC{}
-	generator := app.NewRandomStringGenerator(timeProvider)
 	size := 12
-	randomString := generator.Generate(size)
+	generator := app.NewRandomStringGenerator(timeProvider, size)
+	randomString := generator.Generate()
 
 	require.Len(t, randomString, size)
 }
@@ -28,9 +28,10 @@ func TestRandomStringGeneratorWithUnixEpochTimeProvider(t *testing.T) {
 			return time.Time{}
 		},
 	}
-	generator := app.NewRandomStringGenerator(timeProvider)
 	size := 12
-	randomString := generator.Generate(size)
+	generator := app.NewRandomStringGenerator(timeProvider, size)
+	randomString := generator.Generate()
 
+	require.Len(t, randomString, size)
 	require.Equal(t, expectedString, randomString)
 }
