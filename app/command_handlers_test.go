@@ -5,10 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/maitesin/yaus/internal/domain"
-
 	"github.com/maitesin/yaus/app"
-
+	"github.com/maitesin/yaus/internal/domain"
 	"github.com/stretchr/testify/require"
 )
 

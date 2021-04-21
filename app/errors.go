@@ -2,8 +2,10 @@ package app
 
 import "fmt"
 
-const errMsgInvalidCommand = "invalid command %q received. Expected %q"
-const errMsgURLNotFound = "url %q not found"
+const (
+	errMsgInvalidCommand = "invalid command %q received. Expected %q"
+	errMsgURLNotFound    = "url %q not found"
+)
 
 type InvalidCommandError struct {
 	received Command
