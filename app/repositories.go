@@ -10,5 +10,6 @@ import (
 
 type URLsRepository interface {
 	FindByOriginal(ctx context.Context, original string) (domain.URL, error)
+	FindByShortened(ctx context.Context, shortened string) (domain.URL, error)
 	Save(ctx context.Context, url domain.URL) error
 }

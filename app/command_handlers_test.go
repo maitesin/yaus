@@ -11,12 +11,14 @@ import (
 )
 
 func TestCreateShortenedURLHandler_Handle(t *testing.T) {
-	repositoryError := errors.New("something went wrong saving the URL")
+	repositorySaveError := errors.New("something went wrong saving the URL")
+	repositoryFindError := errors.New("something went wrong finding the URL")
 	validCmdOriginal := "https://oscarforner.com"
 
 	tests := []struct {
 		name                    string
 		urlsRepositorySaveError error
+		urlsRepositoryFindError error
 		cmd                     app.Command
 		expectedErr             error
 	}{
@@ -41,11 +43,31 @@ func TestCreateShortenedURLHandler_Handle(t *testing.T) {
 			name: `Given a URLsRepository that fails when the Save method is called,
 				   when the CreateShortenedURL Handle method is called,
                    then it returns the error from the Save method`,
-			urlsRepositorySaveError: repositoryError,
+			urlsRepositorySaveError: repositorySaveError,
 			cmd: app.CreateShortenedURLCmd{
 				Original: validCmdOriginal,
 			},
-			expectedErr: repositoryError,
+			expectedErr: repositorySaveError,
+		},
+		{
+			name: `Given a URLsRepository that fails when the FindByOriginal method is called with an error not found,
+				   when the CreateShortenedURL Handle method is called,
+                   then it returns the error from the FindByOriginal method`,
+			urlsRepositoryFindError: app.URLNotFound{},
+			cmd: app.CreateShortenedURLCmd{
+				Original: validCmdOriginal,
+			},
+			expectedErr: app.URLNotFound{},
+		},
+		{
+			name: `Given a URLsRepository that fails when the FindByOriginal method is called with an error,
+				   when the CreateShortenedURL Handle method is called,
+                   then it returns the error from the FindByOriginal method`,
+			urlsRepositoryFindError: repositoryFindError,
+			cmd: app.CreateShortenedURLCmd{
+				Original: validCmdOriginal,
+			},
+			expectedErr: repositoryFindError,
 		},
 		{
 			name: `Given an invalid command,
@@ -73,6 +95,9 @@ func TestCreateShortenedURLHandler_Handle(t *testing.T) {
 			urlsRepository := &URLsRepositoryMock{
 				SaveFunc: func(context.Context, domain.URL) error {
 					return tt.urlsRepositorySaveError
+				},
+				FindByOriginalFunc: func(context.Context, string) (domain.URL, error) {
+					return domain.URL{}, tt.urlsRepositoryFindError
 				},
 			}
 

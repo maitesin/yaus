@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"errors"
 
 	"github.com/maitesin/yaus/internal/domain"
 )
@@ -48,6 +49,11 @@ func (csuh CreateShortenedURLHandler) Handle(ctx context.Context, cmd Command) e
 	createCmd, ok := cmd.(CreateShortenedURLCmd)
 	if !ok {
 		return InvalidCommandError{expected: CreateShortenedURLCmd{}, received: cmd}
+	}
+
+	_, err := csuh.urlsRepository.FindByOriginal(ctx, createCmd.Original)
+	if err != nil && !errors.As(err, &URLNotFound{}) {
+		return err
 	}
 
 	shortened := csuh.stringGenerator.Generate()
