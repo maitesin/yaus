@@ -18,7 +18,7 @@ func NewURL(original, shortened string) (URL, error) {
 		return URL{}, NewOriginalURLInvalidError(original)
 	}
 	if shortened == "" {
-		return URL{}, ShortenedValueIsEmptyError{}
+		return URL{}, ErrShortenedValueIsEmpty
 	}
 	_, err := url.ParseRequestURI(original)
 	if err != nil {

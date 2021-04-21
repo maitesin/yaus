@@ -10,6 +10,8 @@ const (
 	createShortenedURLCmdName = "CreateShortenedURLCmdName"
 )
 
+//go:generate moq -out zmock_command_test.go -pkg app_test . Command
+
 // Command defines the interface of the commands to be performed
 type Command interface {
 	Name() string
@@ -22,7 +24,7 @@ type CommandHandler interface {
 
 // CreateShortenedURLCmd is a VTO
 type CreateShortenedURLCmd struct {
-	original string
+	Original string
 }
 
 // Name returns the name of command to create a shortened URL
@@ -49,5 +51,9 @@ func (csuh CreateShortenedURLHandler) Handle(ctx context.Context, cmd Command) e
 	}
 
 	shortened := csuh.stringGenerator.Generate()
-	return csuh.urlsRepository.Save(ctx, domain.NewURL(createCmd.original, shortened))
+	url, err := domain.NewURL(createCmd.Original, shortened)
+	if err != nil {
+		return err
+	}
+	return csuh.urlsRepository.Save(ctx, url)
 }

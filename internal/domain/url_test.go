@@ -1,8 +1,10 @@
-package domain
+package domain_test
 
 import (
 	"testing"
 	"time"
+
+	"github.com/maitesin/yaus/internal/domain"
 
 	"github.com/stretchr/testify/require"
 )
@@ -12,36 +14,36 @@ func TestNewURL(t *testing.T) {
 		name        string
 		original    string
 		shortened   string
-		expectedURL URL
+		expectedURL domain.URL
 		expectedErr error
 	}{
 		{
 			name:        "Given a valid URL and a valid shortened, when the NewURL is called, then it creates a valid URL",
 			original:    "https://oscarforner.com",
 			shortened:   "wololo",
-			expectedURL: URL{Original: "https://oscarforner.com", Shortened: "wololo"},
+			expectedURL: domain.URL{Original: "https://oscarforner.com", Shortened: "wololo"},
 			expectedErr: nil,
 		},
 		{
 			name:        "Given an invalid URL and an invalid shortened, when the NewURL is called, then it returns an OriginalURLInvalidError",
 			original:    "",
 			shortened:   "",
-			expectedURL: URL{},
-			expectedErr: NewOriginalURLInvalidError(""),
+			expectedURL: domain.URL{},
+			expectedErr: domain.NewOriginalURLInvalidError(""),
 		},
 		{
-			name:        "Given a valid URL and an invalid shortened, when the NewURL is called, then it returns an ShortenedValueIsEmptyError",
+			name:        "Given a valid URL and an invalid shortened, when the NewURL is called, then it returns an ErrShortenedValueIsEmpty",
 			original:    "https://oscarforner.com",
 			shortened:   "",
-			expectedURL: URL{},
-			expectedErr: ShortenedValueIsEmptyError{},
+			expectedURL: domain.URL{},
+			expectedErr: domain.ErrShortenedValueIsEmpty,
 		},
 		{
 			name:        "Given an invalid URL and a valid shortened, when the NewURL is called, then it returns an OriginalURLInvalidError",
 			original:    "wololo",
 			shortened:   "123456890",
-			expectedURL: URL{},
-			expectedErr: NewOriginalURLInvalidError("wololo"),
+			expectedURL: domain.URL{},
+			expectedErr: domain.NewOriginalURLInvalidError("wololo"),
 		},
 	}
 	for _, tt := range tests {
@@ -50,7 +52,7 @@ func TestNewURL(t *testing.T) {
 			t.Parallel()
 
 			start := time.Now().UTC()
-			got, err := NewURL(tt.original, tt.shortened)
+			got, err := domain.NewURL(tt.original, tt.shortened)
 			end := time.Now().UTC()
 
 			if tt.expectedErr == nil {

@@ -2,7 +2,7 @@ package app
 
 import "math/rand"
 
-//go:generate moq -out mock_string_generator_test.go -pkg app_test . StringGenerator
+//go:generate moq -out zmock_string_generator_test.go -pkg app_test . StringGenerator
 
 // StringGenerator defines the interface to generate strings of a given length
 type StringGenerator interface {

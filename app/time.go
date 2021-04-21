@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-//go:generate moq -out mock_time_provider_test.go -pkg app_test . TimeProvider
+//go:generate moq -out zmock_time_provider_test.go -pkg app_test . TimeProvider
 
 // TimeProvider defines the way to obtain the current time
 type TimeProvider interface {
