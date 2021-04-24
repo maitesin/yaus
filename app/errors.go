@@ -30,6 +30,10 @@ type URLNotFound struct {
 	url string
 }
 
+func NewURLNotFound(url string) URLNotFound {
+	return URLNotFound{url: url}
+}
+
 func (unf URLNotFound) Error() string {
 	return fmt.Sprintf(errMsgURLNotFound, unf.url)
 }
