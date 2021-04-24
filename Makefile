@@ -12,3 +12,6 @@ test: generate
 
 lint: generate
 	golangci-lint run
+
+run:
+	go run cmd/yaus/main.go
