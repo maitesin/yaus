@@ -25,14 +25,18 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 		expectedBody       []byte
 	}{
 		{
-			name:               "Given a CreateShortenedHandler with a working command handler, when an HTTP request is received, it returns an OK status code",
+			name: `Given a CreateShortenedHandler with a working command handler,
+                   when an HTTP request is received,
+                   then it returns an OK status code`,
 			body:               "",
 			cmdHandlerErr:      nil,
 			expectedStatusCode: http.StatusOK,
 			expectedBody:       []byte{},
 		},
 		{
-			name:               "Given a CreateShortenedHandler with a non-working command handler, when an HTTP request is received, it returns an internal server error status code",
+			name: `Given a CreateShortenedHandler with a non-working command handler,
+                   when an HTTP request is received,
+                   then it returns an internal server error status code`,
 			body:               "",
 			cmdHandlerErr:      errors.New("something went wrong in the Handler"),
 			expectedStatusCode: http.StatusInternalServerError,
@@ -75,7 +79,9 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 		expectedBody       []byte
 	}{
 		{
-			name:               "Given a RetrieveURLHandler with a working query handler, when an HTTP request with a valid shortened code is received, it returns a 307 status code with the original URL in the Location header",
+			name: `Given a RetrieveURLHandler with a working query handler,
+                   when an HTTP request with a valid shortened code is received,
+                   then it returns a 307 status code with the original URL in the Location header`,
 			shortened:          "wololo",
 			queryHandlerRes:    domain.URL{Original: "https://oscarforner.com"},
 			queryHandlerErr:    nil,
@@ -86,14 +92,18 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			expectedBody: []byte{},
 		},
 		{
-			name:               "Given a RetrieveURLHandler with a working query handler, when an HTTP request with an empty shortened code is received, it returns a not found status code",
+			name: `Given a RetrieveURLHandler with a working query handler,
+                   when an HTTP request with an empty shortened code is received,
+                   then it returns a not found status code`,
 			shortened:          "",
 			expectedStatusCode: http.StatusNotFound,
 			expectedHeaders:    http.Header{},
 			expectedBody:       []byte(httpx.NotFoundError),
 		},
 		{
-			name:               "Given a RetrieveURLHandler with a non-working query handler, when an HTTP request with a valid shortened code is received, it returns a not found status code",
+			name: `Given a RetrieveURLHandler with a non-working query handler,
+                   when an HTTP request with a valid shortened code is received,
+                   then it returns a not found status code`,
 			shortened:          "wololo",
 			queryHandlerErr:    errors.New(""),
 			expectedStatusCode: http.StatusNotFound,
@@ -101,7 +111,9 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			expectedBody:       []byte(httpx.NotFoundError),
 		},
 		{
-			name:               "Given a RetrieveURLHandler with a unexpected query handler, when an HTTP request with a valid shortened code is received, it returns an internal server error status code",
+			name: `Given a RetrieveURLHandler with a unexpected query handler,
+                   when an HTTP request with a valid shortened code is received,
+                   then it returns an internal server error status code`,
 			shortened:          "wololo",
 			queryHandlerRes:    &QueryResponseMock{},
 			expectedStatusCode: http.StatusInternalServerError,
