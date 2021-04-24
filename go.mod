@@ -5,6 +5,7 @@ go 1.16
 require (
 	4d63.com/gochecknoglobals v0.0.0-20210416044342-fb0abda3d9aa // indirect
 	github.com/chavacava/garif v0.0.0-20210405164556-e8a0a408d6af // indirect
+	github.com/go-chi/chi v1.5.4 // indirect
 	github.com/golangci/golangci-lint v1.39.0 // indirect
 	github.com/google/go-cmp v0.5.5 // indirect
 	github.com/gostaticanalysis/analysisutil v0.7.1 // indirect
