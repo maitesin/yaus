@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/maitesin/yaus/app"
+	"github.com/maitesin/yaus/internal/app"
 	"github.com/stretchr/testify/require"
 )
 

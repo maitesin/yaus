@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/maitesin/yaus/app"
+	"github.com/maitesin/yaus/internal/app"
 	"github.com/maitesin/yaus/internal/domain"
 	"github.com/stretchr/testify/require"
 )

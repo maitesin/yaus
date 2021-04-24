@@ -10,9 +10,9 @@ import (
 	"testing"
 
 	"github.com/go-chi/chi"
-	"github.com/maitesin/yaus/app"
-	httpx "github.com/maitesin/yaus/infra/http"
+	"github.com/maitesin/yaus/internal/app"
 	"github.com/maitesin/yaus/internal/domain"
+	httpx "github.com/maitesin/yaus/internal/infra/http"
 	"github.com/stretchr/testify/require"
 )
 

@@ -6,10 +6,10 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/maitesin/yaus/app"
 	"github.com/maitesin/yaus/config"
-	httpx "github.com/maitesin/yaus/infra/http"
-	"github.com/maitesin/yaus/infra/sql"
+	"github.com/maitesin/yaus/internal/app"
+	httpx "github.com/maitesin/yaus/internal/infra/http"
+	sqlx "github.com/maitesin/yaus/internal/infra/sql"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 	conf := config.NewConfig()
 
 	stringGenerator := app.NewRandomStringGenerator(&app.TimeProviderUTC{}, conf.RandomStringSize)
-	urlsRepository := sql.NewInMemoryURLsRepository()
+	urlsRepository := sqlx.NewInMemoryURLsRepository()
 
 	router.Use(middleware.DefaultLogger)
 	router.Post("/", httpx.NewCreateShortenedHandler(app.NewCreateShortenedURLHandler(stringGenerator, urlsRepository)))

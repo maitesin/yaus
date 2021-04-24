@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/maitesin/yaus/app"
+	"github.com/maitesin/yaus/internal/app"
 	"github.com/maitesin/yaus/internal/domain"
 )
 
