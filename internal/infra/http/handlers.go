@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -9,7 +10,7 @@ import (
 )
 
 // NewCreateShortenedHandler returns an HTTP handler to process the creation of a shortened URL
-func NewCreateShortenedHandler(handler app.CommandHandler) http.HandlerFunc {
+func NewCreateShortenedHandler(commandHandler app.CommandHandler, queryHandler app.QueryHandler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
 		if err != nil {
@@ -19,13 +20,25 @@ func NewCreateShortenedHandler(handler app.CommandHandler) http.HandlerFunc {
 
 		original := r.FormValue("url")
 		cmd := app.CreateShortenedURLCmd{Original: original}
-		err = handler.Handle(r.Context(), cmd)
+		err = commandHandler.Handle(r.Context(), cmd)
 		if err != nil {
 			buildResponse(w, http.StatusInternalServerError, nil, []byte(InternalServerError))
 			return
 		}
 
-		buildResponse(w, http.StatusOK, nil, nil)
+		query := app.RetrieveURLByOriginalQuery{Original: original}
+		queryResponse, err := queryHandler.Handle(r.Context(), query)
+		if err != nil {
+			buildResponse(w, http.StatusInternalServerError, nil, []byte(InternalServerError))
+			return
+		}
+		resp, ok := queryResponse.(domain.URL)
+		if !ok {
+			buildResponse(w, http.StatusInternalServerError, nil, []byte(InternalServerError))
+			return
+		}
+
+		buildResponse(w, http.StatusOK, nil, []byte(fmt.Sprintf("shortcode: %q", resp.Shortened)))
 	}
 }
 
@@ -37,7 +50,7 @@ func NewRetrieveURLHandler(handler app.QueryHandler) http.HandlerFunc {
 			return
 		}
 
-		query := app.RetrieveURLQuery{Shortened: shortened}
+		query := app.RetrieveURLByShortenedQuery{Shortened: shortened}
 		response, err := handler.Handle(r.Context(), query)
 		if err != nil {
 			buildResponse(w, http.StatusNotFound, nil, []byte(NotFoundError))

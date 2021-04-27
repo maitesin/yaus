@@ -3,6 +3,7 @@ package http_test
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -18,20 +19,23 @@ import (
 
 func TestNewCreateShortenedHandler(t *testing.T) {
 	tests := []struct {
-		name               string
-		body               string
-		cmdHandlerErr      error
-		expectedStatusCode int
-		expectedBody       []byte
+		name                 string
+		body                 string
+		cmdHandlerErr        error
+		queryHandlerResponse app.QueryResponse
+		queryHandlerErr      error
+		expectedStatusCode   int
+		expectedBody         []byte
 	}{
 		{
 			name: `Given a CreateShortenedHandler with a working command handler,
                    when an HTTP request is received,
                    then it returns an OK status code`,
-			body:               "",
-			cmdHandlerErr:      nil,
-			expectedStatusCode: http.StatusOK,
-			expectedBody:       []byte{},
+			body:                 "",
+			cmdHandlerErr:        nil,
+			queryHandlerResponse: domain.URL{Shortened: "1234567890"},
+			expectedStatusCode:   http.StatusOK,
+			expectedBody:         []byte(fmt.Sprintf(`shortcode: "1234567890"`)),
 		},
 		{
 			name: `Given a CreateShortenedHandler with a non-working command handler,
@@ -58,7 +62,12 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 					return tt.cmdHandlerErr
 				},
 			}
-			httpx.NewCreateShortenedHandler(cmdHandler)(res, req)
+			queryHandler := &QueryHandlerMock{
+				HandleFunc: func(context.Context, app.Query) (app.QueryResponse, error) {
+					return tt.queryHandlerResponse, tt.queryHandlerErr
+				},
+			}
+			httpx.NewCreateShortenedHandler(cmdHandler, queryHandler)(res, req)
 
 			require.Equal(t, tt.expectedStatusCode, res.Code)
 			body, err := ioutil.ReadAll(res.Body)
@@ -79,7 +88,7 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 		expectedBody       []byte
 	}{
 		{
-			name: `Given a RetrieveURLHandler with a working query handler,
+			name: `Given a RetrieveURLByShortenedHandler with a working query handler,
                    when an HTTP request with a valid shortened code is received,
                    then it returns a 307 status code with the original URL in the Location header`,
 			shortened:          "wololo",
@@ -92,7 +101,7 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			expectedBody: []byte{},
 		},
 		{
-			name: `Given a RetrieveURLHandler with a working query handler,
+			name: `Given a RetrieveURLByShortenedHandler with a working query handler,
                    when an HTTP request with an empty shortened code is received,
                    then it returns a not found status code`,
 			shortened:          "",
@@ -101,7 +110,7 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			expectedBody:       []byte(httpx.NotFoundError),
 		},
 		{
-			name: `Given a RetrieveURLHandler with a non-working query handler,
+			name: `Given a RetrieveURLByShortenedHandler with a non-working query handler,
                    when an HTTP request with a valid shortened code is received,
                    then it returns a not found status code`,
 			shortened:          "wololo",
@@ -111,7 +120,7 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			expectedBody:       []byte(httpx.NotFoundError),
 		},
 		{
-			name: `Given a RetrieveURLHandler with a unexpected query handler,
+			name: `Given a RetrieveURLByShortenedHandler with a unexpected query handler,
                    when an HTTP request with a valid shortened code is received,
                    then it returns an internal server error status code`,
 			shortened:          "wololo",

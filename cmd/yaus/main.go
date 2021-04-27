@@ -27,8 +27,11 @@ func main() {
 	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
 		renderer.Render(writer, []string{"layout.html", "home.html"}, nil)
 	})
-	router.Post("/u", httpx.NewCreateShortenedHandler(app.NewCreateShortenedURLHandler(stringGenerator, urlsRepository)))
-	router.Get("/u/{shortened}", httpx.NewRetrieveURLHandler(app.NewRetrieveURLHandler(urlsRepository)))
+	router.Post("/u", httpx.NewCreateShortenedHandler(
+		app.NewCreateShortenedURLHandler(stringGenerator, urlsRepository),
+		app.NewRetrieveURLByOriginalHandler(urlsRepository),
+	))
+	router.Get("/u/{shortened}", httpx.NewRetrieveURLHandler(app.NewRetrieveURLByShortenedHandler(urlsRepository)))
 	router.Get("/css/main.css", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, path.Join(conf.HTML.StaticDir, "main.css"))
 	})

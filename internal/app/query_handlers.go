@@ -3,7 +3,8 @@ package app
 import "context"
 
 const (
-	retrieveURLQueryName = "RetrieveURLQueryName"
+	retrieveURLByShortenedQueryName = "RetrieveURLByShortenedQueryName"
+	retrieveURLByOriginalQueryName  = "RetrieveURLByOriginalQueryName"
 )
 
 //go:generate moq -out zmock_query_test.go -pkg app_test . Query
@@ -23,32 +24,62 @@ type QueryHandler interface {
 	Handle(ctx context.Context, query Query) (QueryResponse, error)
 }
 
-// RetrieveURLQuery is a VTO
-type RetrieveURLQuery struct {
+// RetrieveURLByShortenedQuery is a VTO
+type RetrieveURLByShortenedQuery struct {
 	Shortened string
 }
 
-// Name returns the name of the query to retrieve a URL
-func (ruq RetrieveURLQuery) Name() string {
-	return retrieveURLQueryName
+// Name returns the name of the query to retrieve a URL by shortened code
+func (ruq RetrieveURLByShortenedQuery) Name() string {
+	return retrieveURLByShortenedQueryName
 }
 
-// RetrieveURLHandler is the handler to retrieve a URL
-type RetrieveURLHandler struct {
+// RetrieveURLByShortenedHandler is the handler to retrieve a URL by shortened code
+type RetrieveURLByShortenedHandler struct {
 	urlsRepository URLsRepository
 }
 
-// NewRetrieveURLHandler is a constructor
-func NewRetrieveURLHandler(urlsRepository URLsRepository) RetrieveURLHandler {
-	return RetrieveURLHandler{urlsRepository: urlsRepository}
+// NewRetrieveURLByShortenedHandler is a constructor
+func NewRetrieveURLByShortenedHandler(urlsRepository URLsRepository) RetrieveURLByShortenedHandler {
+	return RetrieveURLByShortenedHandler{urlsRepository: urlsRepository}
 }
 
-// Handle retrieves a URL
-func (ruh RetrieveURLHandler) Handle(ctx context.Context, query Query) (QueryResponse, error) {
-	retrieveQuery, ok := query.(RetrieveURLQuery)
+// Handle retrieves a URL by the shortened code
+func (rsu RetrieveURLByShortenedHandler) Handle(ctx context.Context, query Query) (QueryResponse, error) {
+	retrieveQuery, ok := query.(RetrieveURLByShortenedQuery)
 	if !ok {
-		return nil, InvalidQueryError{expected: RetrieveURLQuery{}, received: query}
+		return nil, InvalidQueryError{expected: RetrieveURLByShortenedQuery{}, received: query}
 	}
 
-	return ruh.urlsRepository.FindByShortened(ctx, retrieveQuery.Shortened)
+	return rsu.urlsRepository.FindByShortened(ctx, retrieveQuery.Shortened)
+}
+
+// RetrieveURLByOriginalQuery is a VTO
+type RetrieveURLByOriginalQuery struct {
+	Original string
+}
+
+// Name returns the name of the query to retrieve a URL by original URL
+func (ruoq RetrieveURLByOriginalQuery) Name() string {
+	return retrieveURLByOriginalQueryName
+}
+
+// RetrieveURLByOriginalHandler is the handler to retrieve a URL by original URL
+type RetrieveURLByOriginalHandler struct {
+	urlsRepository URLsRepository
+}
+
+// NewRetrieveURLByOriginalHandler is a constructor
+func NewRetrieveURLByOriginalHandler(urlsRepository URLsRepository) RetrieveURLByOriginalHandler {
+	return RetrieveURLByOriginalHandler{urlsRepository: urlsRepository}
+}
+
+// Handle retrieves a URL by the original URL
+func (ruoh RetrieveURLByOriginalHandler) Handle(ctx context.Context, query Query) (QueryResponse, error) {
+	retrieveQuery, ok := query.(RetrieveURLByOriginalQuery)
+	if !ok {
+		return nil, InvalidQueryError{expected: RetrieveURLByOriginalQuery{}, received: query}
+	}
+
+	return ruoh.urlsRepository.FindByOriginal(ctx, retrieveQuery.Original)
 }
