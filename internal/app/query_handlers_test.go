@@ -68,9 +68,12 @@ func TestRetrieveURLByShortenedHandler_Handle(t *testing.T) {
 				FindByOriginalFunc: func(context.Context, string) (domain.URL, error) {
 					return tt.urlsRepositoryFindURL, tt.urlsRepositoryFindError
 				},
+				FindByShortenedFunc: func(context.Context, string) (domain.URL, error) {
+					return tt.urlsRepositoryFindURL, tt.urlsRepositoryFindError
+				},
 			}
 
-			ruh := app.NewRetrieveURLByOriginalHandler(urlsRepository)
+			ruh := tt.handlerGenerator(urlsRepository)
 			got, err := ruh.Handle(context.Background(), tt.query)
 			if err != nil {
 				require.ErrorAs(t, err, &tt.expectedErr)
