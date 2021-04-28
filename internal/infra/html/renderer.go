@@ -16,6 +16,11 @@ func NewRenderer(templatesDir string) Renderer {
 	return Renderer{templatesDir: templatesDir}
 }
 
+type RendererValues struct {
+	Category  string
+	Shortened string
+}
+
 func (hr Renderer) Render(writer io.Writer, names []string, values interface{}) {
 	templateFiles := make([]string, len(names))
 	for i, name := range names {

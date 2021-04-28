@@ -30,7 +30,8 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <div class="mt-1 alert alert-warning"> <!-- Add category here -->
+            <div class="mt-1 alert alert-{{ .Category }}">
+                {{ .Shortened }}
             </div>
         </div>
     </div>

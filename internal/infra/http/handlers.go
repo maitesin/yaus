@@ -1,16 +1,21 @@
 package http
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/maitesin/yaus/internal/app"
 	"github.com/maitesin/yaus/internal/domain"
+	"github.com/maitesin/yaus/internal/infra/html"
 )
 
 // NewCreateShortenedHandler returns an HTTP handler to process the creation of a shortened URL
-func NewCreateShortenedHandler(commandHandler app.CommandHandler, queryHandler app.QueryHandler) http.HandlerFunc {
+func NewCreateShortenedHandler(
+	commandHandler app.CommandHandler,
+	queryHandler app.QueryHandler,
+	renderer html.Renderer,
+	templates []string,
+) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
 		if err != nil {
@@ -38,7 +43,10 @@ func NewCreateShortenedHandler(commandHandler app.CommandHandler, queryHandler a
 			return
 		}
 
-		buildResponse(w, http.StatusOK, nil, []byte(fmt.Sprintf("shortcode: %q", resp.Shortened)))
+		renderer.Render(w, templates, html.RendererValues{
+			Shortened: resp.Shortened,
+			Category:  "info",
+		})
 	}
 }
 

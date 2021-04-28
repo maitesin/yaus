@@ -30,6 +30,8 @@ func main() {
 	router.Post("/u", httpx.NewCreateShortenedHandler(
 		app.NewCreateShortenedURLHandler(stringGenerator, urlsRepository),
 		app.NewRetrieveURLByOriginalHandler(urlsRepository),
+		renderer,
+		[]string{"layout.html", "home.html"},
 	))
 	router.Get("/u/{shortened}", httpx.NewRetrieveURLHandler(app.NewRetrieveURLByShortenedHandler(urlsRepository)))
 	router.Get("/css/main.css", func(writer http.ResponseWriter, request *http.Request) {
