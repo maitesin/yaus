@@ -3,8 +3,7 @@ package http_test
 import (
 	"context"
 	"errors"
-	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -25,7 +24,7 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 		queryHandlerResponse app.QueryResponse
 		queryHandlerErr      error
 		expectedStatusCode   int
-		expectedBody         []byte
+		expectedBodyContent  []byte
 	}{
 		{
 			name: `Given a CreateShortenedHandler with a working command handler,
@@ -35,16 +34,16 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 			cmdHandlerErr:        nil,
 			queryHandlerResponse: domain.URL{Shortened: "1234567890"},
 			expectedStatusCode:   http.StatusOK,
-			expectedBody:         []byte(fmt.Sprintf(`shortcode: "1234567890"`)),
+			expectedBodyContent:  []byte("1234567890"),
 		},
 		{
 			name: `Given a CreateShortenedHandler with a non-working command handler,
                    when an HTTP request is received,
                    then it returns an internal server error status code`,
-			body:               "",
-			cmdHandlerErr:      errors.New("something went wrong in the Handler"),
-			expectedStatusCode: http.StatusInternalServerError,
-			expectedBody:       []byte(httpx.InternalServerError),
+			body:                "",
+			cmdHandlerErr:       errors.New("something went wrong in the Handler"),
+			expectedStatusCode:  http.StatusInternalServerError,
+			expectedBodyContent: []byte(httpx.InternalServerError),
 		},
 	}
 	for _, tt := range tests {
@@ -67,12 +66,11 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 					return tt.queryHandlerResponse, tt.queryHandlerErr
 				},
 			}
-			httpx.NewCreateShortenedHandler(cmdHandler, queryHandler)(res, req)
+			renderer := &RendererMock{RenderFunc: func(io.Writer, []string, interface{}) {}}
+
+			httpx.NewCreateShortenedHandler(cmdHandler, queryHandler, renderer, nil)(res, req)
 
 			require.Equal(t, tt.expectedStatusCode, res.Code)
-			body, err := ioutil.ReadAll(res.Body)
-			require.NoError(t, err)
-			require.Equal(t, tt.expectedBody, body)
 		})
 	}
 }
@@ -85,7 +83,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 		queryHandlerErr    error
 		expectedStatusCode int
 		expectedHeaders    http.Header
-		expectedBody       []byte
 	}{
 		{
 			name: `Given a RetrieveURLByShortenedHandler with a working query handler,
@@ -98,7 +95,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			expectedHeaders: http.Header{
 				"Location": []string{"https://oscarforner.com"},
 			},
-			expectedBody: []byte{},
 		},
 		{
 			name: `Given a RetrieveURLByShortenedHandler with a working query handler,
@@ -107,7 +103,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			shortened:          "",
 			expectedStatusCode: http.StatusNotFound,
 			expectedHeaders:    http.Header{},
-			expectedBody:       []byte(httpx.NotFoundError),
 		},
 		{
 			name: `Given a RetrieveURLByShortenedHandler with a non-working query handler,
@@ -117,7 +112,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			queryHandlerErr:    errors.New(""),
 			expectedStatusCode: http.StatusNotFound,
 			expectedHeaders:    http.Header{},
-			expectedBody:       []byte(httpx.NotFoundError),
 		},
 		{
 			name: `Given a RetrieveURLByShortenedHandler with a unexpected query handler,
@@ -127,7 +121,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			queryHandlerRes:    &QueryResponseMock{},
 			expectedStatusCode: http.StatusInternalServerError,
 			expectedHeaders:    http.Header{},
-			expectedBody:       []byte(httpx.InternalServerError),
 		},
 	}
 	for _, tt := range tests {
@@ -152,9 +145,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 
 			require.Equal(t, tt.expectedStatusCode, res.Code)
 			require.Equal(t, tt.expectedHeaders, res.Header())
-			body, err := ioutil.ReadAll(res.Body)
-			require.NoError(t, err)
-			require.Equal(t, tt.expectedBody, body)
 		})
 	}
 }

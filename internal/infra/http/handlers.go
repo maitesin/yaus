@@ -13,7 +13,7 @@ import (
 func NewCreateShortenedHandler(
 	commandHandler app.CommandHandler,
 	queryHandler app.QueryHandler,
-	renderer html.Renderer,
+	renderer app.Renderer,
 	templates []string,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

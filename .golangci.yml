@@ -132,3 +132,7 @@ issues:
     - linters:
         - gocritic
       text: "unnecessaryDefer:"
+
+run:
+  skip-files:
+    - "zmock.*\\.go"
