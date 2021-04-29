@@ -3,8 +3,10 @@ package http_test
 import (
 	"context"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/go-chi/chi"
@@ -17,6 +19,7 @@ import (
 func TestNewCreateShortenedHandler(t *testing.T) {
 	tests := []struct {
 		name                 string
+		bodyReader           io.Reader
 		cmdHandlerErr        error
 		queryHandlerResponse app.QueryResponse
 		queryHandlerErr      error
@@ -26,16 +29,40 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 			name: `Given a CreateShortenedHandler with a working command handler,
                    when an HTTP request is received,
                    then it returns an OK status code`,
+			bodyReader:           strings.NewReader(""),
 			cmdHandlerErr:        nil,
 			queryHandlerResponse: domain.URL{Shortened: "1234567890"},
-			expectedStatusCode:   http.StatusOK,
+			expectedStatusCode:   http.StatusCreated,
+		},
+		{
+			name: `Given a CreateShortenedHandler,
+                   when an HTTP request with an empty bodyReader is received,
+                   then it returns a bad request status code`,
+			expectedStatusCode: http.StatusBadRequest,
 		},
 		{
 			name: `Given a CreateShortenedHandler with a non-working command handler,
                    when an HTTP request is received,
                    then it returns an internal server error status code`,
+			bodyReader:         strings.NewReader(""),
 			cmdHandlerErr:      errors.New("something went wrong in the Handler"),
 			expectedStatusCode: http.StatusInternalServerError,
+		},
+		{
+			name: `Given a CreateShortenedHandler with a non-working query handler,
+                   when an HTTP request is received,
+                   then it returns an internal server error status code`,
+			bodyReader:         strings.NewReader(""),
+			queryHandlerErr:    errors.New("something went wrong in the Handler"),
+			expectedStatusCode: http.StatusInternalServerError,
+		},
+		{
+			name: `Given a CreateShortenedHandler with a working query handler that does not return domain.URL,
+                   when an HTTP request is received,
+                   then it returns an internal server error status code`,
+			bodyReader:           strings.NewReader(""),
+			queryHandlerResponse: "unexpected",
+			expectedStatusCode:   http.StatusInternalServerError,
 		},
 	}
 	for _, tt := range tests {
@@ -43,7 +70,7 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "/", nil)
+			req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "/", tt.bodyReader)
 			require.NoError(t, err)
 
 			res := httptest.NewRecorder()
@@ -58,13 +85,11 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 					return tt.queryHandlerResponse, tt.queryHandlerErr
 				},
 			}
-			renderer := &RendererMock{RenderFunc: func(writer http.ResponseWriter, _ int, _ http.Header, _ interface{}) {
-				writer.WriteHeader(tt.expectedStatusCode)
+			renderer := &RendererMock{RenderFunc: func(_ http.ResponseWriter, statusCode int, _ http.Header, _ interface{}) {
+				require.Equal(t, tt.expectedStatusCode, statusCode)
 			}}
 
 			httpx.NewCreateShortenedHandler(cmdHandler, queryHandler, renderer)(res, req)
-
-			require.Equal(t, tt.expectedStatusCode, res.Code)
 		})
 	}
 }
@@ -96,7 +121,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
                    then it returns a not found status code`,
 			shortened:          "",
 			expectedStatusCode: http.StatusNotFound,
-			expectedHeaders:    http.Header{},
 		},
 		{
 			name: `Given a RetrieveURLByShortenedHandler with a non-working query handler,
@@ -105,7 +129,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			shortened:          "wololo",
 			queryHandlerErr:    errors.New(""),
 			expectedStatusCode: http.StatusNotFound,
-			expectedHeaders:    http.Header{},
 		},
 		{
 			name: `Given a RetrieveURLByShortenedHandler with a unexpected query handler,
@@ -114,7 +137,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			shortened:          "wololo",
 			queryHandlerRes:    &QueryResponseMock{},
 			expectedStatusCode: http.StatusInternalServerError,
-			expectedHeaders:    http.Header{},
 		},
 	}
 	for _, tt := range tests {
@@ -130,13 +152,9 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			chiCtx.URLParams.Add("shortened", tt.shortened)
 			ctx := context.WithValue(context.Background(), chi.RouteCtxKey, chiCtx)
 
-			renderer := &RendererMock{RenderFunc: func(writer http.ResponseWriter, _ int, _ http.Header, _ interface{}) {
-				for key, values := range tt.expectedHeaders {
-					for _, value := range values {
-						writer.Header().Add(key, value)
-					}
-				}
-				writer.WriteHeader(tt.expectedStatusCode)
+			renderer := &RendererMock{RenderFunc: func(_ http.ResponseWriter, statusCode int, headers http.Header, _ interface{}) {
+				require.Equal(t, tt.expectedStatusCode, statusCode)
+				require.Equal(t, tt.expectedHeaders, headers)
 			}}
 
 			req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/something", nil)
@@ -145,9 +163,6 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			res := httptest.NewRecorder()
 
 			httpx.NewRetrieveURLHandler(queryHandler, renderer)(res, req)
-
-			require.Equal(t, tt.expectedStatusCode, res.Code)
-			require.Equal(t, tt.expectedHeaders, res.Header())
 		})
 	}
 }
