@@ -1,17 +1,21 @@
 package html
 
-import "net/http"
+import (
+	"html/template"
+	"net/http"
+	"path"
+)
 
 type TemplateFactory interface {
-	Template(httpStatus int) []string
+	Template(httpStatus int) *template.Template
 }
 
 type YausTemplateFactory struct {
-	status2templates map[int][]string
-	defaultTemplates []string
+	status2templates map[int]*template.Template
+	defaultTemplates *template.Template
 }
 
-func (ytf YausTemplateFactory) Template(httpStatus int) []string {
+func (ytf YausTemplateFactory) Template(httpStatus int) *template.Template {
 	found, ok := ytf.status2templates[httpStatus]
 	if !ok {
 		return ytf.defaultTemplates
@@ -19,12 +23,38 @@ func (ytf YausTemplateFactory) Template(httpStatus int) []string {
 	return found
 }
 
-func NewYausTemplateFactory() YausTemplateFactory {
-	return YausTemplateFactory{
-		defaultTemplates: []string{"layout.html", "home.html"},
-		status2templates: map[int][]string{
-			http.StatusNotFound:            {"layout.html", "404.html"},
-			http.StatusInternalServerError: {"layout.html", "500.html"},
-		},
+func NewYausTemplateFactory(templatesDir string) (*YausTemplateFactory, error) {
+	defaultTemplate, err := buildTemplate(templatesDir, []string{"layout.html", "home.html"})
+	if err != nil {
+		return nil, err
 	}
+	statusNotFound, err := buildTemplate(templatesDir, []string{"layout.html", "404.html"})
+	if err != nil {
+		return nil, err
+	}
+	statusInternalServerError, err := buildTemplate(templatesDir, []string{"layout.html", "500.html"})
+	if err != nil {
+		return nil, err
+	}
+	return &YausTemplateFactory{
+		defaultTemplates: defaultTemplate,
+		status2templates: map[int]*template.Template{
+			http.StatusNotFound:            statusNotFound,
+			http.StatusInternalServerError: statusInternalServerError,
+		},
+	}, nil
+}
+
+func buildTemplate(templatesDir string, templateNames []string) (*template.Template, error) {
+	templateFiles := make([]string, len(templateNames))
+	for i, name := range templateNames {
+		templateFiles[i] = path.Join(templatesDir, name)
+	}
+
+	parsed, err := template.ParseFiles(templateFiles...)
+	if err != nil {
+		return nil, err
+	}
+
+	return parsed, nil
 }

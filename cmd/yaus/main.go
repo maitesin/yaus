@@ -22,7 +22,12 @@ func main() {
 
 	stringGenerator := app.NewRandomStringGenerator(&app.TimeProviderUTC{}, conf.RandomStringSize)
 	urlsRepository := sqlx.NewInMemoryURLsRepository()
-	renderer := html.NewBasicRenderer(conf.HTML.TemplatesDir, html.NewYausTemplateFactory())
+	templateFactory, err := html.NewYausTemplateFactory(conf.HTML.TemplatesDir)
+	if err != nil {
+		fmt.Printf("Failed to create template factory: %s\n", err.Error())
+		return
+	}
+	renderer := html.NewBasicRenderer(templateFactory)
 
 	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
 		renderer.Render(writer, http.StatusOK, nil)
@@ -40,7 +45,7 @@ func main() {
 		renderer.Render(writer, http.StatusNotFound, nil)
 	})
 
-	err := http.ListenAndServe(conf.HTTP.Address, router)
+	err = http.ListenAndServe(conf.HTTP.Address, router)
 	if err != nil {
 		fmt.Printf("Failed to start service: %s", err.Error())
 	}
