@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/go-chi/chi"
@@ -18,7 +17,6 @@ import (
 func TestNewCreateShortenedHandler(t *testing.T) {
 	tests := []struct {
 		name                 string
-		body                 string
 		cmdHandlerErr        error
 		queryHandlerResponse app.QueryResponse
 		queryHandlerErr      error
@@ -28,7 +26,6 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 			name: `Given a CreateShortenedHandler with a working command handler,
                    when an HTTP request is received,
                    then it returns an OK status code`,
-			body:                 "",
 			cmdHandlerErr:        nil,
 			queryHandlerResponse: domain.URL{Shortened: "1234567890"},
 			expectedStatusCode:   http.StatusOK,
@@ -37,7 +34,6 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 			name: `Given a CreateShortenedHandler with a non-working command handler,
                    when an HTTP request is received,
                    then it returns an internal server error status code`,
-			body:               "",
 			cmdHandlerErr:      errors.New("something went wrong in the Handler"),
 			expectedStatusCode: http.StatusInternalServerError,
 		},
@@ -47,7 +43,7 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "/", strings.NewReader(tt.body))
+			req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "/", nil)
 			require.NoError(t, err)
 
 			res := httptest.NewRecorder()
