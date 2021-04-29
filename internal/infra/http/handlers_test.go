@@ -23,7 +23,6 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 		queryHandlerResponse app.QueryResponse
 		queryHandlerErr      error
 		expectedStatusCode   int
-		expectedBodyContent  []byte
 	}{
 		{
 			name: `Given a CreateShortenedHandler with a working command handler,
@@ -33,16 +32,14 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 			cmdHandlerErr:        nil,
 			queryHandlerResponse: domain.URL{Shortened: "1234567890"},
 			expectedStatusCode:   http.StatusOK,
-			expectedBodyContent:  []byte("1234567890"),
 		},
 		{
 			name: `Given a CreateShortenedHandler with a non-working command handler,
                    when an HTTP request is received,
                    then it returns an internal server error status code`,
-			body:                "",
-			cmdHandlerErr:       errors.New("something went wrong in the Handler"),
-			expectedStatusCode:  http.StatusInternalServerError,
-			expectedBodyContent: []byte(httpx.InternalServerError),
+			body:               "",
+			cmdHandlerErr:      errors.New("something went wrong in the Handler"),
+			expectedStatusCode: http.StatusInternalServerError,
 		},
 	}
 	for _, tt := range tests {
