@@ -3,17 +3,27 @@ package html
 import (
 	"fmt"
 	"html/template"
-	"io"
+	"net/http"
 	"path"
 	"strings"
 )
 
-type Renderer struct {
-	templatesDir string
+//go:generate moq -out ../http/zmock_renderer_test.go -pkg http_test . Renderer
+
+type Renderer interface {
+	Render(writer http.ResponseWriter, httpStatus int, values interface{})
 }
 
-func NewRenderer(templatesDir string) Renderer {
-	return Renderer{templatesDir: templatesDir}
+type BasicRenderer struct {
+	templatesDir string
+	factory      TemplateFactory
+}
+
+func NewBasicRenderer(templatesDir string, factory TemplateFactory) BasicRenderer {
+	return BasicRenderer{
+		templatesDir: templatesDir,
+		factory:      factory,
+	}
 }
 
 type RendererValues struct {
@@ -21,7 +31,8 @@ type RendererValues struct {
 	Shortened string
 }
 
-func (hr Renderer) Render(writer io.Writer, names []string, values interface{}) {
+func (hr BasicRenderer) Render(writer http.ResponseWriter, httpStatus int, values interface{}) {
+	names := hr.factory.Template(httpStatus)
 	templateFiles := make([]string, len(names))
 	for i, name := range names {
 		templateFiles[i] = path.Join(hr.templatesDir, name)
@@ -36,4 +47,5 @@ func (hr Renderer) Render(writer io.Writer, names []string, values interface{}) 
 	if err != nil {
 		fmt.Printf("Error executing template: %s\n", err.Error())
 	}
+	writer.WriteHeader(httpStatus)
 }

@@ -13,8 +13,7 @@ import (
 func NewCreateShortenedHandler(
 	commandHandler app.CommandHandler,
 	queryHandler app.QueryHandler,
-	renderer app.Renderer,
-	templates []string,
+	renderer html.Renderer,
 ) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
@@ -27,23 +26,23 @@ func NewCreateShortenedHandler(
 		cmd := app.CreateShortenedURLCmd{Original: original}
 		err = commandHandler.Handle(r.Context(), cmd)
 		if err != nil {
-			buildResponse(w, http.StatusInternalServerError, nil, []byte(InternalServerError))
+			renderer.Render(w, http.StatusInternalServerError, nil)
 			return
 		}
 
 		query := app.RetrieveURLByOriginalQuery{Original: original}
 		queryResponse, err := queryHandler.Handle(r.Context(), query)
 		if err != nil {
-			buildResponse(w, http.StatusInternalServerError, nil, []byte(InternalServerError))
+			renderer.Render(w, http.StatusInternalServerError, nil)
 			return
 		}
 		resp, ok := queryResponse.(domain.URL)
 		if !ok {
-			buildResponse(w, http.StatusInternalServerError, nil, []byte(InternalServerError))
+			renderer.Render(w, http.StatusInternalServerError, nil)
 			return
 		}
 
-		renderer.Render(w, templates, html.RendererValues{
+		renderer.Render(w, http.StatusCreated, html.RendererValues{
 			Shortened: resp.Shortened,
 			Category:  "info",
 		})

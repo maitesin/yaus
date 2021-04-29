@@ -3,7 +3,6 @@ package http_test
 import (
 	"context"
 	"errors"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -66,9 +65,11 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 					return tt.queryHandlerResponse, tt.queryHandlerErr
 				},
 			}
-			renderer := &RendererMock{RenderFunc: func(io.Writer, []string, interface{}) {}}
+			renderer := &RendererMock{RenderFunc: func(writer http.ResponseWriter, _ int, _ interface{}) {
+				writer.WriteHeader(tt.expectedStatusCode)
+			}}
 
-			httpx.NewCreateShortenedHandler(cmdHandler, queryHandler, renderer, nil)(res, req)
+			httpx.NewCreateShortenedHandler(cmdHandler, queryHandler, renderer)(res, req)
 
 			require.Equal(t, tt.expectedStatusCode, res.Code)
 		})

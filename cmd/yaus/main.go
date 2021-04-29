@@ -22,20 +22,22 @@ func main() {
 
 	stringGenerator := app.NewRandomStringGenerator(&app.TimeProviderUTC{}, conf.RandomStringSize)
 	urlsRepository := sqlx.NewInMemoryURLsRepository()
-	renderer := html.NewRenderer(conf.HTML.TemplatesDir)
+	renderer := html.NewBasicRenderer(conf.HTML.TemplatesDir, html.NewYausTemplateFactory())
 
 	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-		renderer.Render(writer, []string{"layout.html", "home.html"}, nil)
+		renderer.Render(writer, http.StatusOK, nil)
 	})
 	router.Post("/u", httpx.NewCreateShortenedHandler(
 		app.NewCreateShortenedURLHandler(stringGenerator, urlsRepository),
 		app.NewRetrieveURLByOriginalHandler(urlsRepository),
 		renderer,
-		[]string{"layout.html", "home.html"},
 	))
 	router.Get("/u/{shortened}", httpx.NewRetrieveURLHandler(app.NewRetrieveURLByShortenedHandler(urlsRepository)))
 	router.Get("/css/main.css", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, path.Join(conf.HTML.StaticDir, "main.css"))
+	})
+	router.NotFound(func(writer http.ResponseWriter, request *http.Request) {
+		renderer.Render(writer, http.StatusNotFound, nil)
 	})
 
 	err := http.ListenAndServe(conf.HTTP.Address, router)
