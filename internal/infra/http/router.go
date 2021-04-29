@@ -15,19 +15,19 @@ func DefaultRouter(conf html.Config, repository app.URLsRepository, generator ap
 	router.Use(middleware.DefaultLogger)
 
 	router.Get("/", func(writer http.ResponseWriter, request *http.Request) {
-		renderer.Render(writer, http.StatusOK, nil)
+		renderer.Render(writer, http.StatusOK, nil, nil)
 	})
 	router.Post("/u", NewCreateShortenedHandler(
 		app.NewCreateShortenedURLHandler(generator, repository),
 		app.NewRetrieveURLByOriginalHandler(repository),
 		renderer,
 	))
-	router.Get("/u/{shortened}", NewRetrieveURLHandler(app.NewRetrieveURLByShortenedHandler(repository)))
+	router.Get("/u/{shortened}", NewRetrieveURLHandler(app.NewRetrieveURLByShortenedHandler(repository), renderer))
 	router.Get("/css/main.css", func(writer http.ResponseWriter, request *http.Request) {
 		http.ServeFile(writer, request, path.Join(conf.StaticDir, "main.css"))
 	})
 	router.NotFound(func(writer http.ResponseWriter, request *http.Request) {
-		renderer.Render(writer, http.StatusNotFound, nil)
+		renderer.Render(writer, http.StatusNotFound, nil, nil)
 	})
 
 	return router

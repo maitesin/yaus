@@ -65,7 +65,7 @@ func TestNewCreateShortenedHandler(t *testing.T) {
 					return tt.queryHandlerResponse, tt.queryHandlerErr
 				},
 			}
-			renderer := &RendererMock{RenderFunc: func(writer http.ResponseWriter, _ int, _ interface{}) {
+			renderer := &RendererMock{RenderFunc: func(writer http.ResponseWriter, _ int, _ http.Header, _ interface{}) {
 				writer.WriteHeader(tt.expectedStatusCode)
 			}}
 
@@ -137,12 +137,21 @@ func TestNewRetrieveURLHandler(t *testing.T) {
 			chiCtx.URLParams.Add("shortened", tt.shortened)
 			ctx := context.WithValue(context.Background(), chi.RouteCtxKey, chiCtx)
 
+			renderer := &RendererMock{RenderFunc: func(writer http.ResponseWriter, _ int, _ http.Header, _ interface{}) {
+				for key, values := range tt.expectedHeaders {
+					for _, value := range values {
+						writer.Header().Add(key, value)
+					}
+				}
+				writer.WriteHeader(tt.expectedStatusCode)
+			}}
+
 			req, err := http.NewRequestWithContext(ctx, http.MethodGet, "/something", nil)
 			require.NoError(t, err)
 
 			res := httptest.NewRecorder()
 
-			httpx.NewRetrieveURLHandler(queryHandler)(res, req)
+			httpx.NewRetrieveURLHandler(queryHandler, renderer)(res, req)
 
 			require.Equal(t, tt.expectedStatusCode, res.Code)
 			require.Equal(t, tt.expectedHeaders, res.Header())
