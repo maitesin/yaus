@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -42,8 +43,14 @@ func NewCreateShortenedHandler(
 			return
 		}
 
+		scheme := "http"
+		if r.TLS != nil {
+			scheme = "https"
+		}
+		fqu := fmt.Sprintf("%s://%s%s/", scheme, r.Host, r.RequestURI)
+
 		renderer.Render(w, http.StatusCreated, nil, html.RendererValues{
-			Shortened: resp.Shortened,
+			Shortened: fqu + resp.Shortened,
 			Category:  "info",
 		})
 	}
