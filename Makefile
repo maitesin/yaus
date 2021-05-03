@@ -15,3 +15,6 @@ lint: generate
 
 run:
 	go run cmd/yaus/main.go
+
+build:
+	cd cmd/yaus && go build .
