@@ -16,7 +16,7 @@ type InMemoryURLsRepository struct {
 
 // NewInMemoryURLsRepository is a constructor
 func NewInMemoryURLsRepository() *InMemoryURLsRepository {
-	// Temporary value added for end-to-end purposes
+	// Temporary value added for end-to-end testing purposes
 	url, _ := domain.NewURL("https://oscarforner.com", "wololo")
 	return &InMemoryURLsRepository{
 		urls: []domain.URL{url},
