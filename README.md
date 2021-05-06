@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/maitesin/yaus.svg?branch=master)](https://travis-ci.org/maitesin/yaus)
-
 # YAUS
+
 **YAUS**, **Y**et **A**nother **U**RL **S**hortener
 
 ## Features
+
 - [x] Basic URL shortener functionality
 - [x] Use a database to store the shortened URLs instead of keeping them in memory
     - [x] Add database error handling
@@ -16,10 +16,11 @@
     - [x] Migrate to use PostgreSQL instead of SQLite
 - [x] Add a frontend functionality to allow creating the short URLs from the browser itself
 - [x] Custom error pages
-- [x] Do not allow to generate a short URL for an already shortened URL
-- [x] Do not allow to generate a short URL for a URL that is already shorter than the resulting shortened URL
 
 ## TODO
+
+- [ ] Do not allow to generate a short URL for an already shortened URL
+- [ ] Do not allow to generate a short URL for a URL that is already shorter than the resulting shortened URL
 - [ ] Improve error messages depending on the cause of the errors
 - [ ] Add last used column in the URL table to keep track of the least most used URLs
 - [ ] Add possibility to block URL to specific domains
@@ -29,21 +30,33 @@
 - [ ] Implement a way to get rid of the least used URLs
 
 ## How to run YAUS locally
-Before running **YAUS** its dependencies have to be met.
 
-### Install dependencies
-To install **YAUS**'s dependencies just run the following command:
-```bash
-pip install -r requirements.txt
-```
+YAUS uses `docker` and `docker-compose` to run both the DB and the YAUS application locally. 
+
 ### Running YAUS
+
 To run **YAUS** run the following command:
 ```bash
-python run.py
+make run
 ```
 
 ## How to run YAUS tests
-The only requirement is to have tox installed.
+
+You would need to install the linting dependencies
 ```bash
-tox
+make tools-lint
+```
+
+### Running test
+
+You need to run the following command to run the unit test
+```bash
+make test
+```
+
+### Running linting
+
+You need to run the following command to run the linting
+```bash
+make lint
 ```
