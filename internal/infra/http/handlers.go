@@ -19,6 +19,7 @@ func NewCreateShortenedHandler(
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := r.ParseForm()
 		if err != nil {
+			fmt.Printf("Error: %s\n", err)
 			renderer.Render(w, http.StatusBadRequest, nil, nil)
 			return
 		}
@@ -27,6 +28,7 @@ func NewCreateShortenedHandler(
 		cmd := app.CreateShortenedURLCmd{Original: original}
 		err = commandHandler.Handle(r.Context(), cmd)
 		if err != nil {
+			fmt.Printf("Error: %s\n", err)
 			renderer.Render(w, http.StatusInternalServerError, nil, nil)
 			return
 		}
@@ -34,11 +36,13 @@ func NewCreateShortenedHandler(
 		query := app.RetrieveURLByOriginalQuery{Original: original}
 		queryResponse, err := queryHandler.Handle(r.Context(), query)
 		if err != nil {
+			fmt.Printf("Error: %s\n", err)
 			renderer.Render(w, http.StatusInternalServerError, nil, nil)
 			return
 		}
 		resp, ok := queryResponse.(domain.URL)
 		if !ok {
+			fmt.Printf("Error: %s\n", err)
 			renderer.Render(w, http.StatusInternalServerError, nil, nil)
 			return
 		}
@@ -67,12 +71,14 @@ func NewRetrieveURLHandler(handler app.QueryHandler, renderer html.Renderer) htt
 		query := app.RetrieveURLByShortenedQuery{Shortened: shortened}
 		response, err := handler.Handle(r.Context(), query)
 		if err != nil {
+			fmt.Printf("Error: %s\n", err)
 			renderer.Render(w, http.StatusNotFound, nil, nil)
 			return
 		}
 
 		url, ok := response.(domain.URL)
 		if !ok {
+			fmt.Printf("Error: %s\n", err)
 			renderer.Render(w, http.StatusInternalServerError, nil, nil)
 			return
 		}

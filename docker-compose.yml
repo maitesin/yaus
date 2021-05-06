@@ -1,10 +1,14 @@
 version: "3"
 
 services:
-  yaus:
+  app:
     build: .
     ports:
       - "8080:8080"
+    restart: always
+    environment:
+      YAUS_DB_HOST: db
+      YAUS_DB_PORT: 5432
     depends_on:
       - db
   db:
@@ -13,6 +17,8 @@ services:
       POSTGRES_USER: ${DB_USERNAME:-yaus}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
       POSTGRES_DB: ${DB_NAME:-urls}
+    volumes:
+    - ./devops/db/migrations:/docker-entrypoint-initdb.d
     ports:
-      - "${DB_HOST:-127.0.0.1}:${DB_PORT:-54321}:54321"
+      - "${DB_HOST:-127.0.0.1}:${DB_PORT:-54321}:5432"
     command: ["postgres", "-c", "log_statement=all"]

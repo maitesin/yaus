@@ -14,7 +14,7 @@ lint: generate
 	golangci-lint run
 
 run:
-	go run cmd/yaus/main.go
+	docker-compose up -d --build app
 
 build:
 	cd cmd/yaus && go build .
