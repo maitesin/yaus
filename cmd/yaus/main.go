@@ -44,7 +44,10 @@ func main() {
 	}
 	renderer := html.NewBasicRenderer(templateFactory)
 
-	err = http.ListenAndServe(strings.Join([]string{conf.HTTP.Host, conf.HTTP.Port}, ":"), httpx.DefaultRouter(conf.HTML, urlsRepository, stringGenerator, renderer))
+	err = http.ListenAndServe(
+		strings.Join([]string{conf.HTTP.Host, conf.HTTP.Port}, ":"),
+		httpx.DefaultRouter(conf.HTML, urlsRepository, stringGenerator, renderer),
+	)
 	if err != nil {
 		fmt.Printf("Failed to start service: %s\n", err.Error())
 	}
