@@ -1,1 +1,1 @@
-web: ./yaus
+web: ./bin/yaus
