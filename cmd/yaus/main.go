@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/maitesin/yaus/config"
 	"github.com/maitesin/yaus/internal/app"
@@ -43,7 +44,7 @@ func main() {
 	}
 	renderer := html.NewBasicRenderer(templateFactory)
 
-	err = http.ListenAndServe(conf.HTTP.Address, httpx.DefaultRouter(conf.HTML, urlsRepository, stringGenerator, renderer))
+	err = http.ListenAndServe(strings.Join([]string{conf.HTTP.Host, conf.HTTP.Port}, ":"), httpx.DefaultRouter(conf.HTML, urlsRepository, stringGenerator, renderer))
 	if err != nil {
 		fmt.Printf("Failed to start service: %s\n", err.Error())
 	}

@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	defaultAddress    = ":8080"
+	defaultPort       = "8080"
+	defaultHost       = ""
 	defaultAssetsPath = "devops/html"
 	defaultSize       = "12"
 )
@@ -33,7 +34,8 @@ func NewConfig() (Config, error) {
 
 	return Config{
 		HTTP: httpx.Config{
-			Address: GetEnvOrDefault("YAUS_ADDRESS", defaultAddress),
+			Host: GetEnvOrDefault("HOST", defaultHost),
+			Port: GetEnvOrDefault("PORT", defaultPort),
 		},
 		HTML: html.Config{
 			TemplatesDir: path.Join(GetEnvOrDefault("YAUS_ASSETS", defaultAssetsPath), "templates"),
