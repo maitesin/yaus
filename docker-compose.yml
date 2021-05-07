@@ -7,8 +7,7 @@ services:
       - "8080:8080"
     restart: always
     environment:
-      YAUS_DB_HOST: db
-      YAUS_DB_PORT: 5432
+      YAUS_DB_URL: "postgres://yaus:postgres@db:5432/urls"
     depends_on:
       - db
   db:

@@ -20,7 +20,7 @@ func main() {
 		return
 	}
 
-	dbConn, err := sql.Open(conf.SQL.Type, conf.SQL.DatabaseURL())
+	dbConn, err := sql.Open("postgres", conf.SQL.DatabaseURL())
 	if err != nil {
 		fmt.Printf("Failed to open connection to the DB: %s\n", err)
 		return
