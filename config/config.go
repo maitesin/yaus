@@ -40,7 +40,7 @@ func NewConfig() (Config, error) {
 			StaticDir:    path.Join(GetEnvOrDefault("YAUS_ASSETS", defaultAssetsPath), "static"),
 		},
 		SQL: sql.Config{
-			URL:          GetEnvOrDefault("YAUS_DB_URL", "postgres://yaus:postgres@localhost:54321/urls"),
+			URL:          GetEnvOrDefault("DATABASE_URL", "postgres://yaus:postgres@localhost:54321/urls"),
 			SSLMode:      GetEnvOrDefault("YAUS_DB_SSL_MODE", "disable"),
 			BinaryParams: GetEnvOrDefault("YAUS_DB_BINARY_PARAMETERS", "yes"),
 		},
