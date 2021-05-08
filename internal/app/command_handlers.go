@@ -54,7 +54,10 @@ func (csuh CreateShortenedURLHandler) Handle(ctx context.Context, cmd Command) e
 	}
 
 	_, err := csuh.urlsRepository.FindByOriginal(ctx, createCmd.Original)
-	if err != nil && !errors.As(err, &URLNotFound{}) {
+	switch {
+	case err == nil:
+		return nil // The original URL already exists
+	case !errors.As(err, &URLNotFound{}):
 		return err
 	}
 
