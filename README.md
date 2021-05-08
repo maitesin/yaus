@@ -2,6 +2,8 @@
 
 **YAUS**, **Y**et **A**nother **U**RL **S**hortener
 
+![](https://raw.githubusercontent.com/maitesin/yaus/master/screenshot.png)
+
 ## Features
 
 - [x] Basic URL shortener functionality
