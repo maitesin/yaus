@@ -47,14 +47,8 @@ func NewCreateShortenedHandler(
 			return
 		}
 
-		scheme := "http"
-		if r.TLS != nil {
-			scheme = "https"
-		}
-		fqu := fmt.Sprintf("%s://%s%s/", scheme, r.Host, r.RequestURI)
-
 		renderer.Render(w, http.StatusCreated, nil, html.RendererValues{
-			Shortened: fqu + resp.Shortened,
+			Shortened: fmt.Sprintf("https://%s%s/%s", r.Host, r.RequestURI, resp.Shortened),
 			Category:  "info",
 		})
 	}
