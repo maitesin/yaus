@@ -8,6 +8,7 @@ import (
 
 	"github.com/maitesin/yaus/config"
 	"github.com/maitesin/yaus/internal/app"
+	"github.com/maitesin/yaus/internal/infra/auth"
 	"github.com/maitesin/yaus/internal/infra/html"
 	httpx "github.com/maitesin/yaus/internal/infra/http"
 	sqlx "github.com/maitesin/yaus/internal/infra/sql"
@@ -44,9 +45,11 @@ func main() {
 	}
 	renderer := html.NewBasicRenderer(templateFactory)
 
+	authMiddleware := auth.Middleware(conf.Auth)
+
 	err = http.ListenAndServe(
 		strings.Join([]string{conf.HTTP.Host, conf.HTTP.Port}, ":"),
-		httpx.DefaultRouter(conf.HTML, urlsRepository, stringGenerator, renderer),
+		httpx.DefaultRouter(conf.HTML, authMiddleware, urlsRepository, stringGenerator, renderer),
 	)
 	if err != nil {
 		fmt.Printf("Failed to start service: %s\n", err.Error())
