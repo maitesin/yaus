@@ -2,6 +2,7 @@ tools-generate:
 	go get -u github.com/matryer/moq
 
 tools-lint: tools-generate
+	go get -u github.com/quasilyte/go-ruleguard/dsl # Temporary dependency to avoid go-critic failing
 	go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 generate:
