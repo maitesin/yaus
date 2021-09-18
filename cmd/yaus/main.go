@@ -45,7 +45,7 @@ func main() {
 	}
 	renderer := html.NewBasicRenderer(templateFactory)
 
-	authMiddleware := auth.Middleware(conf.Auth)
+	authMiddleware := auth.Middleware(conf.Auth, renderer)
 
 	err = http.ListenAndServe(
 		strings.Join([]string{conf.HTTP.Host, conf.HTTP.Port}, ":"),

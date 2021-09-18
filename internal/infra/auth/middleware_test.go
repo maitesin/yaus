@@ -76,7 +76,12 @@ func TestMiddleware(t *testing.T) {
 			req.Header.Add("Authorization", tt.authHeaderBuilder(authConfig))
 			res := httptest.NewRecorder()
 
-			middleware := auth.Middleware(authConfig)
+			renderer := &RendererMock{RenderFunc: func(w http.ResponseWriter, statusCode int, _ http.Header, _ interface{}) {
+				require.Equal(t, tt.expectedStatusCode, statusCode)
+				w.WriteHeader(statusCode)
+			}}
+
+			middleware := auth.Middleware(authConfig, renderer)
 			middleware(successHandler)(res, req)
 
 			require.Equal(t, tt.expectedStatusCode, res.Code)

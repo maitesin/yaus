@@ -6,6 +6,7 @@ import (
 )
 
 //go:generate moq -out ../http/zmock_renderer_test.go -pkg http_test . Renderer
+//go:generate moq -out ../auth/zmock_renderer_test.go -pkg auth_test . Renderer
 
 type Renderer interface {
 	Render(writer http.ResponseWriter, httpStatus int, headers http.Header, values interface{})
