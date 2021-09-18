@@ -12,7 +12,13 @@ import (
 
 type Middleware func(handlerFunc http.HandlerFunc) http.HandlerFunc
 
-func DefaultRouter(conf html.Config, authMiddleware Middleware, repository app.URLsRepository, generator app.StringGenerator, renderer html.Renderer) http.Handler {
+func DefaultRouter(
+	conf html.Config,
+	authMiddleware Middleware,
+	repository app.URLsRepository,
+	generator app.StringGenerator,
+	renderer html.Renderer,
+) http.Handler {
 	router := chi.NewRouter()
 	router.Use(middleware.DefaultLogger)
 

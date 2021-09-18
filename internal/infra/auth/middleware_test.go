@@ -1,13 +1,15 @@
 package auth_test
 
 import (
+	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/maitesin/yaus/internal/infra/auth"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/maitesin/yaus/internal/infra/auth"
+	"github.com/stretchr/testify/require"
 )
 
 type authHeaderBuilder func(auth.Config) string
@@ -69,7 +71,7 @@ func TestMiddleware(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			req, err := http.NewRequest(http.MethodPost, "/", nil)
+			req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "/", nil)
 			require.NoError(t, err)
 			req.Header.Add("Authorization", tt.authHeaderBuilder(authConfig))
 			res := httptest.NewRecorder()

@@ -1,8 +1,9 @@
 package auth
 
 import (
-	httpx "github.com/maitesin/yaus/internal/infra/http"
 	"net/http"
+
+	httpx "github.com/maitesin/yaus/internal/infra/http"
 )
 
 func Middleware(conf Config) httpx.Middleware {
