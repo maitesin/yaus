@@ -82,7 +82,6 @@ linters:
     - gocyclo
     - gofmt
     - goimports
-    - golint
     - gomnd
     - goprintffuncname
     - gosec
@@ -94,6 +93,7 @@ linters:
     - nakedret
     - noctx
     - nolintlint
+    - revive
     - rowserrcheck
     - staticcheck
     - structcheck
@@ -118,7 +118,6 @@ linters:
   # - nestif
   # - prealloc
   # - testpackage
-  # - revive
   # - wsl
 
 issues:
